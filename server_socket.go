@@ -1,7 +1,10 @@
 package ruota
 
 import (
+	"bufio"
+	"fmt"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -36,4 +39,23 @@ func (p *RServerSocket) Accept() error {
 	}
 	p.Conn = conn
 	return nil
+}
+
+func (p *RServerSocket) AcceptLoop() {
+	fmt.Println("Server Socket Accept Loop")
+	for {
+		p.Accept()
+		netData, err := bufio.NewReader(p.Conn).ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(string(netData))
+
+		tmp := strings.TrimSpace(string(netData))
+		if tmp == "STOP" {
+			break
+		}
+	}
+	p.Conn.Close()
 }

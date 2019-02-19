@@ -28,3 +28,7 @@ func (p *RClientSocket) Dial() error {
 	fmt.Println("Client Socket Dialed")
 	return err
 }
+
+func (p *RClientSocket) Close() error {
+	return p.Conn.Close()
+}
