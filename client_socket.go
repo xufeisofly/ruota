@@ -32,3 +32,15 @@ func (p *RClientSocket) Dial() error {
 func (p *RClientSocket) Close() error {
 	return p.Conn.Close()
 }
+
+func (p *RClientSocket) Read(b []byte) (int, error) {
+	return p.Conn.Read(b)
+}
+
+func (p *RClientSocket) Write(b []byte) (int, error) {
+	return p.Conn.Write(b)
+}
+
+func (p *RClientSocket) Flush() error {
+	return nil
+}

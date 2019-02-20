@@ -17,6 +17,8 @@ func NewRBufferedTransport(trans RTransport, bufferSize int) (RTransport, error)
 	}, nil
 }
 
+// 在socket 的 RWC 基础上，重新定义了 BufferedTransport的 RWC 方法
+
 func (p *RBufferedTransport) Close() error {
 	return p.Trans.Close()
 }
@@ -35,4 +37,8 @@ func (p *RBufferedTransport) Write(w []byte) (int, error) {
 		p.ReadWriter.Writer.Reset(p.Trans)
 	}
 	return n, nil
+}
+
+func (p *RBufferedTransport) Flush() error {
+	return p.ReadWriter.Flush()
 }
