@@ -42,3 +42,61 @@ func (p *RBufferedTransport) Write(w []byte) (int, error) {
 func (p *RBufferedTransport) Flush() error {
 	return p.ReadWriter.Flush()
 }
+
+// Write and Read Methods
+
+func (p *RBufferedTransport) WriteFunName(funName []byte) error {
+	_, err := p.Write(funName)
+	return err
+}
+
+func (p *RBufferedTransport) WriteArg(arg []byte) error {
+	_, err := p.Write(arg)
+	return err
+}
+
+func (p *RBufferedTransport) WriteList(l [][]byte, elemType RType) error {
+	// 写入数组元素类型
+	if _, err := p.Write(elemType); err != nil {
+		return err
+	}
+	// 写入数组大小
+	if _, err := p.Write(len(l)); err != nil {
+		return err
+	}
+	// 写入数组内容
+	for _, v := range l {
+		if _, err := p.Write(v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *RBufferedTransport) ReadFunName() ([]byte, error) {
+	_, err := p.Read(b)
+	return b, err
+}
+
+func (p *RBufferedTransport) ReadList() ([][]byte, size, error) {
+	// 读取数组元素类型
+	var rType RType
+	if _, err := p.Read(rType); err != nil {
+		return [][]byte{}, 0, err
+	}
+	// 读取数组大小
+	var size int32
+	if _, err := p.Read(size); err != nil {
+		return [][]byte{}, 0, err
+	}
+	// 读取数据内容
+	var ret [][]byte
+	for i := 0; i < size; i++ {
+		var _elem []byte
+		if _, err := p.Read(_elem); err != nil {
+			return [][]byte{}, 0, err
+		}
+		ret = append(ret, _elem)
+	}
+	return ret, size, nil
+}
