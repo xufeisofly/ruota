@@ -1,6 +1,9 @@
 package ruota
 
-import "bufio"
+import (
+	"bufio"
+	"io"
+)
 
 type RBufferedTransport struct {
 	ReadWriter bufio.ReadWriter
@@ -55,13 +58,19 @@ func (p *RBufferedTransport) WriteArg(arg []byte) error {
 	return err
 }
 
+func (p *RBufferedTransport) WriteByte(b byte) error {
+	v := [1]byte{b}
+	_, err := p.Write(v[0:1])
+	return err
+}
+
 func (p *RBufferedTransport) WriteList(l [][]byte, elemType RType) error {
 	// 写入数组元素类型
-	if _, err := p.Write(elemType); err != nil {
+	if err := p.WriteByte(byte(elemType)); err != nil {
 		return err
 	}
 	// 写入数组大小
-	if _, err := p.Write(len(l)); err != nil {
+	if err := p.WriteByte(byte(len(l))); err != nil {
 		return err
 	}
 	// 写入数组内容
@@ -74,19 +83,36 @@ func (p *RBufferedTransport) WriteList(l [][]byte, elemType RType) error {
 }
 
 func (p *RBufferedTransport) ReadFunName() ([]byte, error) {
+	var b []byte
 	_, err := p.Read(b)
 	return b, err
 }
 
-func (p *RBufferedTransport) ReadList() ([][]byte, size, error) {
+func (p *RBufferedTransport) ReadByte() (byte, error) {
+	v := [1]byte{0}
+	n, err := p.Read(v[0:1])
+	if n > 0 && (err == nil || err == io.EOF) {
+		return v[0], nil
+	}
+	if n > 0 && err != nil {
+		return v[0], err
+	}
+	if err != nil {
+		return 0, err
+	}
+	return v[0], nil
+}
+
+func (p *RBufferedTransport) ReadList() ([][]byte, int, error) {
 	// 读取数组元素类型
-	var rType RType
-	if _, err := p.Read(rType); err != nil {
+	_, err := p.ReadByte()
+	if err != nil {
 		return [][]byte{}, 0, err
 	}
 	// 读取数组大小
-	var size int32
-	if _, err := p.Read(size); err != nil {
+	sizeByte, err := p.ReadByte()
+	size := int(sizeByte)
+	if err != nil {
 		return [][]byte{}, 0, err
 	}
 	// 读取数据内容

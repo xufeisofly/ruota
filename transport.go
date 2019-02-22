@@ -10,8 +10,10 @@ type RTransport interface {
 
 	WriteFunName([]byte) error
 	WriteArg([]byte) error
+	WriteByte(byte) error
 	WriteList([][]byte, RType) error
 
 	ReadFunName() ([]byte, error)
-	ReadList() ([][]byte, size, error)
+	ReadByte() (byte, error)
+	ReadList() ([][]byte, int, error)
 }

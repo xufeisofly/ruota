@@ -66,10 +66,14 @@ func (p *RClient) Recv(funName string) ([]string, error) {
 	}
 
 	// 接受结果（数组）
-	sResult, size, err := p.Trans.ReadList()
+	sResult, _, err := p.Trans.ReadList()
 	if err != nil {
 		return []string{}, err
 	}
-	dResult, err := p.Serializer.DeserializeList(sResult)
-	return dResult, err
+	dResult, err := p.Serializer.DeserializeList(sResult, STRING)
+	var ret []string
+	for _, v := range dResult {
+		ret = append(ret, v.(string))
+	}
+	return ret, err
 }

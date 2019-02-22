@@ -7,8 +7,8 @@ func NewRBinarySerializer() (RSerializer, error) {
 	return &RBinarySerializer{}, nil
 }
 
-func (p *RBinarySerializer) SerializeString(value string) []byte {
-	return []byte(value)
+func (p *RBinarySerializer) SerializeString(value string) ([]byte, error) {
+	return []byte(value), nil
 }
 
 func (p *RBinarySerializer) SerializeList(value []interface{}, elemType RType, size int32) [][]byte {
@@ -37,13 +37,13 @@ func (p *RBinarySerializer) DeserializeString(value []byte) (string, error) {
 	return string(value), nil
 }
 
-func (p *RBinarySerializer) DeserializeList(value []interface{}, elemType RType) ([]string, error) {
-	var ret []string
+func (p *RBinarySerializer) DeserializeList(value [][]byte, elemType RType) ([]interface{}, error) {
+	var ret []interface{}
 
 	switch elemType {
 	case STRING:
 		for _, item := range value {
-			ret = append(ret, string(item.([]byte)))
+			ret = append(ret, string(item))
 		}
 		break
 	default:
