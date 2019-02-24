@@ -1,6 +1,8 @@
 package ruota
 
-import "errors"
+import (
+	"errors"
+)
 
 type RClient struct {
 	Trans      RTransport
@@ -27,6 +29,8 @@ func (p *RClient) FunCall(name string) ([]string, error) {
 	var arg RClientArg
 	var result RClientResult
 
+	arg.Name = name
+
 	p.Call("FunCall", &arg, &result)
 	return result.Result, nil
 }
@@ -41,11 +45,12 @@ func (p *RClient) Call(funName string, arg *RClientArg, result *RClientResult) e
 
 func (p *RClient) Send(funName string, arg string) error {
 	sFunName, _ := p.Serializer.SerializeString(funName)
-	sArg, _ := p.Serializer.SerializeString(arg)
 	if err := p.Trans.WriteFunName(sFunName); err != nil {
 		return err
 	}
+	sArg, _ := p.Serializer.SerializeString(arg)
 	err := p.Trans.WriteArg(sArg)
+	p.Trans.Flush()
 	return err
 }
 

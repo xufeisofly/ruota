@@ -48,13 +48,26 @@ func (p *RBufferedTransport) Flush() error {
 
 // Write and Read Methods
 
+func (p *RBufferedTransport) writeEnd() error {
+	_, err := p.Write([]byte("\n"))
+	return err
+}
+
 func (p *RBufferedTransport) WriteFunName(funName []byte) error {
 	_, err := p.Write(funName)
+	if err != nil {
+		return err
+	}
+	err = p.writeEnd()
 	return err
 }
 
 func (p *RBufferedTransport) WriteArg(arg []byte) error {
 	_, err := p.Write(arg)
+	if err != nil {
+		return err
+	}
+	err = p.writeEnd()
 	return err
 }
 

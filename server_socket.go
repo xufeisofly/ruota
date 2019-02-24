@@ -1,10 +1,7 @@
 package ruota
 
 import (
-	"bufio"
-	"fmt"
 	"net"
-	"strings"
 	"time"
 )
 
@@ -41,21 +38,16 @@ func (p *RServerSocket) Accept() error {
 	return nil
 }
 
-func (p *RServerSocket) AcceptLoop() {
-	fmt.Println("Server Socket Accept Loop")
-	for {
-		p.Accept()
-		netData, err := bufio.NewReader(p.Conn).ReadString('\n')
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println(string(netData))
+// func process(data string) error {
+// 	// Parse funName and args
+// 	s := strings.Split(data, "\n")
+// 	funName := s[0]
+// 	arg := s[1]
+// 	fmt.Println(funName, arg)
 
-		tmp := strings.TrimSpace(string(netData))
-		if tmp == "STOP" {
-			break
-		}
-	}
-	p.Conn.Close()
-}
+// 	// Call Fun
+// 	processor := &RProcessor{}
+// 	ret := processor.FunCall(arg)
+// 	// Write and Flush Result
+// 	return nil
+// }
