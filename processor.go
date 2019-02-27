@@ -1,3 +1,5 @@
 package ruota
 
-type RProcessor interface{}
+type RProcessor interface {
+	Call(RTransport, RSerializer) error
+}

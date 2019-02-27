@@ -38,16 +38,46 @@ func (p *RServerSocket) Accept() error {
 	return nil
 }
 
-// func process(data string) error {
-// 	// Parse funName and args
-// 	s := strings.Split(data, "\n")
-// 	funName := s[0]
-// 	arg := s[1]
-// 	fmt.Println(funName, arg)
+func (p *RServerSocket) Close() error {
+	return p.Conn.Close()
+}
 
-// 	// Call Fun
-// 	processor := &RProcessor{}
-// 	ret := processor.FunCall(arg)
-// 	// Write and Flush Result
-// 	return nil
-// }
+func (p *RServerSocket) Flush() error {
+	return nil
+}
+
+func (p *RServerSocket) Write(b []byte) (int, error) {
+	return p.Conn.Write(b)
+}
+
+func (p *RServerSocket) Read(b []byte) (int, error) {
+	return p.Conn.Read(b)
+}
+
+func (p *RServerSocket) ReadByte() (byte, error) {
+	return [1]byte{0}[0], nil
+}
+
+func (p *RServerSocket) ReadFunName() ([]byte, error) {
+	return []byte{}, nil
+}
+
+func (p *RServerSocket) ReadList() ([][]byte, int, error) {
+	return [][]byte{}, 0, nil
+}
+
+func (p *RServerSocket) WriteFunName([]byte) error {
+	return nil
+}
+
+func (p *RServerSocket) WriteArg([]byte) error {
+	return nil
+}
+
+func (p *RServerSocket) WriteByte(byte) error {
+	return nil
+}
+
+func (p *RServerSocket) WriteList([][]byte, RType) error {
+	return nil
+}

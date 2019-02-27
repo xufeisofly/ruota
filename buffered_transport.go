@@ -139,3 +139,11 @@ func (p *RBufferedTransport) ReadList() ([][]byte, int, error) {
 	}
 	return ret, size, nil
 }
+
+func (p *RBufferedTransport) Listen() error {
+	return p.Trans.Listen()
+}
+
+func (p *RBufferedTransport) Accept() error {
+	return p.Trans.Accept()
+}

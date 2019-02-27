@@ -1,19 +1,20 @@
 package ruota
 
 import (
-	"bufio"
 	"fmt"
 )
 
 type RServer struct {
-	Socket    RServerSocket
-	Processor RProcessor
+	Trans      RTransport
+	Processor  RProcessor
+	Serializer RSerializer
 }
 
-func NewRServer(serverSocket *RServerSocket, processor RProcessor) (RServer, error) {
+func NewRServer(trans RTransport, processor RProcessor, serializer RSerializer) (RServer, error) {
 	return RServer{
-		Socket:    *serverSocket,
-		Processor: processor,
+		Trans:      trans,
+		Processor:  processor,
+		Serializer: serializer,
 	}, nil
 }
 
@@ -28,23 +29,17 @@ func (p *RServer) Start() error {
 }
 
 func (p *RServer) Listen() error {
-	return p.Socket.Listen()
+	return p.Trans.Listen()
 }
 
 func (p *RServer) AcceptLoop() {
 	fmt.Println("Server Socket Accept Loop")
-	var b = make([]byte, 1024)
 	for {
-		p.Socket.Accept()
+		p.Trans.Accept()
 
-		n, err := bufio.NewReader(p.Socket.Conn).Read(b)
-		data := string(b[:n])
+		err := p.Processor.Call(p.Trans, p.Serializer)
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
-		fmt.Println(data)
-
-		// parse data
 	}
 }

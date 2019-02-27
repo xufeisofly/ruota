@@ -72,3 +72,11 @@ func (p *RClientSocket) WriteByte(byte) error {
 func (p *RClientSocket) WriteList([][]byte, RType) error {
 	return nil
 }
+
+func (p *RClientSocket) Listen() error {
+	return nil
+}
+
+func (p *RClientSocket) Accept() error {
+	return nil
+}

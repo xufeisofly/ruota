@@ -7,6 +7,8 @@ type RTransport interface {
 	io.Writer
 	io.Closer
 	Flush() error
+	Listen() error
+	Accept() error
 
 	WriteFunName([]byte) error
 	WriteArg([]byte) error
