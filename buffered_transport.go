@@ -2,6 +2,7 @@ package ruota
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 )
 
@@ -43,7 +44,11 @@ func (p *RBufferedTransport) Write(w []byte) (int, error) {
 }
 
 func (p *RBufferedTransport) Flush() error {
-	return p.ReadWriter.Flush()
+	if err := p.ReadWriter.Flush(); err != nil {
+		p.ReadWriter.Writer.Reset(p.Trans)
+		return err
+	}
+	return p.Trans.Flush()
 }
 
 // Write and Read Methods
@@ -54,6 +59,7 @@ func (p *RBufferedTransport) writeEnd() error {
 }
 
 func (p *RBufferedTransport) WriteFunName(funName []byte) error {
+	fmt.Printf("WriteFunName --> %s \n", string(funName))
 	_, err := p.Write(funName)
 	if err != nil {
 		return err

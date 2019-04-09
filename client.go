@@ -2,6 +2,7 @@ package ruota
 
 import (
 	"errors"
+	"fmt"
 )
 
 type RClient struct {
@@ -55,20 +56,30 @@ func (p *RClient) Send(funName string, arg string) error {
 }
 
 func (p *RClient) Recv(funName string) ([]string, error) {
+	// TODO should be a loop, 参考 thrift demo Result Read
 	// 接收函数名
-	sFunName, err := p.Trans.ReadFunName()
-	if err != nil {
-		return []string{}, err
-	}
-	dFunName, err := p.Serializer.DeserializeString(sFunName)
-	if err != nil {
-		return []string{}, err
+	var dFunName string
+	for {
+		sFunName, err := p.Trans.ReadFunName()
+		if err != nil {
+			return []string{}, err
+		}
+		dFunName, err := p.Serializer.DeserializeString(sFunName)
+		if err != nil {
+			return []string{}, err
+		}
+		// fmt.Println(dFunName)
+
+		if dFunName == "STOP" {
+			break
+		}
 	}
 
 	// 验证函数名是否正确
 	if dFunName != funName {
 		return []string{}, errors.New("Method not same")
 	}
+	fmt.Printf("Valid Result of FunName: %s", dFunName)
 
 	// 接受结果（数组）
 	sResult, _, err := p.Trans.ReadList()
