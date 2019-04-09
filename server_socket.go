@@ -1,10 +1,7 @@
 package ruota
 
 import (
-	"bufio"
-	"fmt"
 	"net"
-	"strings"
 	"time"
 )
 
@@ -41,21 +38,46 @@ func (p *RServerSocket) Accept() error {
 	return nil
 }
 
-func (p *RServerSocket) AcceptLoop() {
-	fmt.Println("Server Socket Accept Loop")
-	for {
-		p.Accept()
-		netData, err := bufio.NewReader(p.Conn).ReadString('\n')
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println(string(netData))
+func (p *RServerSocket) Close() error {
+	return p.Conn.Close()
+}
 
-		tmp := strings.TrimSpace(string(netData))
-		if tmp == "STOP" {
-			break
-		}
-	}
-	p.Conn.Close()
+func (p *RServerSocket) Flush() error {
+	return nil
+}
+
+func (p *RServerSocket) Write(b []byte) (int, error) {
+	return p.Conn.Write(b)
+}
+
+func (p *RServerSocket) Read(b []byte) (int, error) {
+	return p.Conn.Read(b)
+}
+
+func (p *RServerSocket) ReadByte() (byte, error) {
+	return [1]byte{0}[0], nil
+}
+
+func (p *RServerSocket) ReadFunName() ([]byte, error) {
+	return []byte{}, nil
+}
+
+func (p *RServerSocket) ReadList() ([][]byte, int, error) {
+	return [][]byte{}, 0, nil
+}
+
+func (p *RServerSocket) WriteFunName([]byte) error {
+	return nil
+}
+
+func (p *RServerSocket) WriteArg([]byte) error {
+	return nil
+}
+
+func (p *RServerSocket) WriteByte(byte) error {
+	return nil
+}
+
+func (p *RServerSocket) WriteList([][]byte, RType) error {
+	return nil
 }

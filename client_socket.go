@@ -44,3 +44,39 @@ func (p *RClientSocket) Write(b []byte) (int, error) {
 func (p *RClientSocket) Flush() error {
 	return nil
 }
+
+func (p *RClientSocket) ReadByte() (byte, error) {
+	return [1]byte{0}[0], nil
+}
+
+func (p *RClientSocket) ReadFunName() ([]byte, error) {
+	return []byte{}, nil
+}
+
+func (p *RClientSocket) ReadList() ([][]byte, int, error) {
+	return [][]byte{}, 0, nil
+}
+
+func (p *RClientSocket) WriteFunName([]byte) error {
+	return nil
+}
+
+func (p *RClientSocket) WriteArg([]byte) error {
+	return nil
+}
+
+func (p *RClientSocket) WriteByte(byte) error {
+	return nil
+}
+
+func (p *RClientSocket) WriteList([][]byte, RType) error {
+	return nil
+}
+
+func (p *RClientSocket) Listen() error {
+	return nil
+}
+
+func (p *RClientSocket) Accept() error {
+	return nil
+}
